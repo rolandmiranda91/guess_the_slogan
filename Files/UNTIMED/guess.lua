@@ -26,20 +26,14 @@ end
 
 function Guess:init()
 
-  -- self.db:exec[[
-  -- 	CREATE TABLE tests (id INTEGER PRIMARY KEY, answer, slogan);
-
-  -- 	INSERT INTO tests VALUES (NULL, 'ABS-CBN', 'In the Service of the Filipino' );
-  -- 	INSERT INTO tests VALUES (NULL, 'BPI', 'We will take you farther');
-  -- 	INSERT INTO tests VALUES (NULL, 'BAYANTEL', 'Gaganda pa ang buhay');
-  -- 	INSERT INTO tests VALUES (NULL, 'BOYSEN', 'The Quality You can Trust');
-  --   INSERT INTO tests VALUES (NULL, 'MARKS AND SPENCER', 'Between love and madness lies obsession')
-  -- ]]
   self.db:exec[[
     CREATE TABLE tests (id INTEGER PRIMARY KEY, answer, slogan, status, points);
     
     INSERT INTO tests VALUES (NULL, 'BAYANTEL', 'Gaganda pa ang buhay',0,100);
     INSERT INTO tests VALUES (NULL, 'MARKS AND SPENCER', 'Between love and madness lies obsession',0,100);
+    INSERT INTO tests VALUES (NULL, 'BOYSEN', 'The Quality You can Trust',0,100);
+    INSERT INTO tests VALUES (NULL, 'CEBU PACIFIC AIR', 'It’s time every Juan flies!',0,100);
+    INSERT INTO tests VALUES (NULL, 'CHOWKING', 'Tikman and tagumpay',0,100);
   ]]
 
   self.db:exec[[
@@ -85,7 +79,7 @@ function Guess:getRandomTest()
 end
 
 function Guess:initUser()
-  print("here in inint User . . . .")
+ 
   for row in self.db:nrows("SELECT * FROM users WHERE id = 1") do 
       --print("currentScore ", row['currentScore'])
       self.score=row['currentScore']
@@ -125,44 +119,6 @@ function Guess:initUserInput()
     self.userInput[i]="_"
  end
 end
-
--- function Guess:setTests()
-
---   local i=1
---   for row in self.db:nrows("SELECT * FROM tests ORDER BY RANDOM() LIMIT 10")  do
---     self.tests[i]=row
---     i = i+1
---   end
-
---   for sum in self.db:urows('SELECT COUNT(slogan) FROM tests') do self.sumTest = sum end
-
--- end
-
--- function Guess:printTests()
--- 	--  for key,value in pairs(t) do print(key,value) end
---   for row,test in pairs(self.tests) do
---   	print(row, test.answer, test.slogan)
---   end
--- end
--- function Guess:getTest(testId)
---    self.slogan = self.tests[testId].slogan
---    self.answer = self.tests[testId].answer
---    --return self.tests[testId].slogan
--- end
--- function Guess:getSlogan(testId)
---    self.slogan = self.tests[testId].slogan
---    return self.tests[testId].slogan
--- end
--- function Guess:getanswer(testId)
---    self.answer = self.tests[testId].answer
---    return self.tests[testId].answer
--- end
-
--- function Guess:dbClose( event )
---     if ( event.type == "applicationExit" ) then
---       db:close()
---     end
--- end
 local function shuffleString(inputStr)
   local outputStr = "";
   local strLength = string.len(inputStr);
@@ -192,13 +148,10 @@ function Guess:setKeys(answer)
       answer = answer..string.char(str:byte(math.random(1, #str)))
     end
     local rand_answer = shuffleString(answer)
-    self.btnLabels = Guess:initTable(self.btnLabels)
+    self.btnLabels = {} --Guess:initTable(self.btnLabels)
     for i=1,#rand_answer do
       self.btnLabels[i]=rand_answer:sub(i,i)
     end
-    --for k,v in pairs(self.btnLabels) do
-    ---  print(" KEY ** "..v)
-    --end
    end
   
 end

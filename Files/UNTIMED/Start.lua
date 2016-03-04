@@ -13,7 +13,7 @@ composer.recycleOnSceneChange = true
 local guess = Guess:new(nil,"Guess.sqlite3")
 guess:init()
 
-guess:setKeys(guess.answer)
+--guess:setKeys(guess.answer)
 guess:initUserInput()
 guess:initUser()
 
@@ -33,6 +33,7 @@ function scene:create( event )
     guess:printTest()
 	guess:printUser()
  	guess:setKeys(guess.answer)
+ 	guess:initUserInput()
  	guess.score = guess:getUserScore()
  
 
@@ -126,7 +127,6 @@ function scene:create( event )
 
 	for i=1,#guess.btnLabels do
 		btnIndex = "btn"..i
-		print("btnLabels ", guess.btnLabels[i] )
 		buttons[btnIndex] = widget.newButton
 		{
 			label = guess.btnLabels[i],
@@ -147,6 +147,7 @@ function scene:create( event )
 		  buttons[btnIndex].y = 294
 		end
 		buttons[btnIndex].id = btnIndex
+		buttons[btnIndex]:setEnabled(true)
 		sceneGroup:insert( buttons[btnIndex] )
 
 	end
@@ -209,6 +210,7 @@ end
 
 function groupFieldAction(event)
 	
+
 	if (event.phase == "ended") then
 		button_label=fields[event.target.id]:getLabel()
 	    if button_label ~= "_" then 
@@ -241,12 +243,10 @@ function groupFieldAction(event)
 end
 
 function groupBtnAction(event)
-	
-	--local b1 = btn1:getLabel()
+	print("i was clicked")
+
 	if (event.phase == "ended" and inTable(guess.userInput,"_") ) then
 	   
-	  -- # if the user input is same as the ans.
-	    -- # fill the field buttons
 	  for key,field in pairs(fields) do 
 	  	if field:getLabel() == "_" then
 	  		field:setLabel(buttons[event.target.id]:getLabel())
@@ -257,35 +257,22 @@ function groupBtnAction(event)
 	  end
 
 	  local userInput = ""
+
 	  for key, value in pairs(guess.userInput) do 
 	  		 userInput = userInput .. value
 	  end
 
-	  -- # disabled and empty the tapped button 
 	   buttons[event.target.id]:setLabel("")
 	   buttons[event.target.id]:setEnabled(false)
-	   --print("buttons == ")
-	   --for key, value in pairs(guess.userInput) do 
-	   --		print(key," => ", value)
-	   --end
 
 	  print("userInput=",userInput," == guess.answer=",trim3(guess.answer))
-	  if (userInput== trim3(guess.answer) )then 
-			--guess.userInput={}
-			--guess.btnLabels={}
-			--guess.userInput = guess:initTable(guess.userInput)
-			--guess:initTable(guess.btnLabels)
+	  if (userInput== trim3(guess.answer) ) then 
 			guess:updateTest(guess.currentTest,1) -- 1 stands for done, 0 for open, 2 for returning
-		
 			guess:meritUser(guess.points)
-
 			guess:getRandomTest()
-	
 			scene:create(event)
-
-	   end
-
-	 
+			--composer.gotoScene("Files.UNTIMED.Start")
+	  end
     end
 	
 end
