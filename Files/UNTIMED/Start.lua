@@ -215,35 +215,21 @@ function groupFieldAction(event)
 		button_label=fields[event.target.id]:getLabel()
 	    if button_label ~= "_" then 
 			button_label=fields[event.target.id]:getLabel()
-			print(" target id : ",event.target.id)
 			field=fields[event.target.id]
-			--field:getLabel()
 			buttons[field['fromButton']]:setLabel(button_label)
 			buttons[field['fromButton']]:setEnabled(true)
 			field:setLabel("_")
 
-			--guess.userInput = string.sub(guess.userInput ,1,event.target.id)..string.sub(guess.userInput ,event.target.id,-1)
-			
-			--
-
 			buttons[field['fromButton']]:setEnabled(true)
 
-			--print("guess.userInput @ field : ", guess.userInput)
 			local btn=field['fromButton']
-			guess.userInput[event.target.id] = "_"
-			--table.remove(guess.userInput, event.target.id) 
-		
-
-			for key, value in pairs(guess.userInput) do 
-			  print(key," => ", value)
-			end
+			guess.userInput[event.target.id] = "_"	
 
 		end
 	end
 end
 
 function groupBtnAction(event)
-	print("i was clicked")
 
 	if (event.phase == "ended" and inTable(guess.userInput,"_") ) then
 	   
@@ -293,11 +279,11 @@ function groupBtnActionHint1(event)
 	  			break
 	  		end
 	  	end
-	  	--field['fromButton']=event.target.id
+
 	  	guess:demeritUser(40)
 	  	guess.score=guess:getUserScore() 
 	  	scoreText.text = guess.score 
-	  	--fields[key]:setEnabled(false)
+	  
 	  end
 	end
 end
