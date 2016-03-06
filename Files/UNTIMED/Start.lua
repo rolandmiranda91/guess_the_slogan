@@ -133,8 +133,8 @@ function scene:create( event )
 			font = "GrilledCheese BTN Cn",
 			fontSize = 20,
 			labelColor = { default={0,0,0}, over={1,1,1} },
-			height = 35,
-			width = 35,
+			height = 30,
+			width = 30,
 			defaultFile = "Key.png",
 			overFile = "Key1.png",
 			onEvent = groupBtnAction
@@ -219,9 +219,6 @@ function groupFieldAction(event)
 			buttons[field['fromButton']]:setLabel(button_label)
 			buttons[field['fromButton']]:setEnabled(true)
 			field:setLabel("_")
-
-			buttons[field['fromButton']]:setEnabled(true)
-
 			local btn=field['fromButton']
 			guess.userInput[event.target.id] = "_"	
 
@@ -257,7 +254,6 @@ function groupBtnAction(event)
 			guess:meritUser(guess.points)
 			guess:getRandomTest()
 			scene:create(event)
-			--composer.gotoScene("Files.UNTIMED.Start")
 	  end
     end
 	
@@ -266,15 +262,17 @@ end
 function groupBtnActionHint1(event)
 
 	if (event.phase == "ended") then
-	  if guess.score > 40 then
+	  local key = 0
+	  if guess.score >= 40 then
 	  	repeat
       	  key=math.random(1,#guess.answer)
-    	until string.char(guess.answer:byte(key)) ~= " "
-	  	
+    	until string.char(guess.answer:byte(key)) ~= " " and fields[key]:getLabel() == "_"
+	  
 	  	fields[key]:setLabel(string.char(guess.answer:byte(key)))
 	  	for i, button in pairs(buttons) do 
 	  		if button:getLabel() == string.char(guess.answer:byte(key)) then
 	  			button:setLabel("")
+	  			button:setEnabled(false)
 	  			fields[key]['fromButton'] = button.id
 	  			break
 	  		end
@@ -290,17 +288,57 @@ end
 function groupBtnActionHint2(event)
 
 	if (event.phase == "ended") then
-	  if guess.score > 20 then
-	  	repeat
-      	  key=math.random(1,18)
-      	  buttons["btn"..key]:setLabel("")
-      	  buttons["btn"..key]:setEnabled(false)
-    	until string.match(string.char(guess.answer:byte(key)),guess.answer) == nil
-		guess:demeritUser(20)
-		guess.score=guess:getUserScore() 
-		scoreText.text = guess.score 
-	  end
+		if guess.score >= 20 then
+			local randStr = {}
+			local x = 0
+			local w = 0
+			for i,button in pairs(buttons) do
+				for word in string.gmatch(guess.answer,button:getLabel()) do
+  					w = w + 1
+				end
+				if w == 1 and string.match(guess.answer,button:getLabel()) == nil and button:getLabel() ~= "" then 
+					x = x + 1
+					randStr[x] = button:getLabel()
+				end
+			end
+			for key,value  in pairs(randStr) do
+				print(key,value)
+			end
+			 key=math.random(1,x)
+			  print(" removed ",  buttons["btn"..key]:getLabel())
+			  buttons["btn"..key]:setLabel("")
+      		  buttons["btn"..key]:setEnabled(false)
+      		  guess:demeritUser(20)
+			  guess.score=guess:getUserScore() 
+			  scoreText.text = guess.score 
+		end
 	end
+	-- if (event.phase == "ended") then
+	--   local key = 0
+	--   local str = ""
+	--   local trim_buttons = 0
+	--   for i, button in pairs(buttons) do 
+	--   		if button:getLabel() ~= "" then 
+	--   			trim_buttons = trim_buttons + 1
+	--   		end
+	--   end
+
+	--  print(trim_buttons ," == ", string.len(trim3(guess.answer)))
+	--   if guess.score >= 20 and trim_buttons >  string.len(trim3(guess.answer)) then
+	--   	repeat
+	--   	  key=math.random(1,18)
+	--   	  print("guestt" , guess.answer," KEY ", key)
+	--   	  local char = buttons["btn"..key]:getLabel()
+	--   	  str = string.match(guess.answer,char) 
+	--   	  print("str match ", str, " string char ", char)
+ --    	until str == nil
+ --    	buttons["btn"..key]:setLabel("")
+ --      	buttons["btn"..key]:setEnabled(false)
+	-- 	guess:demeritUser(20)
+	-- 	guess.score=guess:getUserScore() 
+	-- 	scoreText.text = guess.score 
+	--   end
+	-- end
 end
 
 scene:addEventListener( "create", scene )
