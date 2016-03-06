@@ -291,12 +291,12 @@ function groupBtnActionHint2(event)
 		if guess.score >= 20 then
 			local randStr = {}
 			local x = 0
-			local w = 0
+			--local dup = 0
 			for i,button in pairs(buttons) do
-				for word in string.gmatch(guess.answer,button:getLabel()) do
-  					w = w + 1
-				end
-				if w == 1 and string.match(guess.answer,button:getLabel()) == nil and button:getLabel() ~= "" then 
+				--for word in string.gmatch(guess.answer,button:getLabel()) do
+  				--	dup = dup + 1
+				--end
+				if ( string.match(guess.answer,button:getLabel()) == nil ) and button:getLabel() ~= "" then 
 					x = x + 1
 					randStr[x] = button:getLabel()
 				end
